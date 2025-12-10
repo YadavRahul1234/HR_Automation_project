@@ -1,0 +1,1196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview - Professional Assessment Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0c0a1e 0%, #1a1b3a 20%, #2d1b69 40%, #4c1d95 60%, #7c3aed 80%, #a855f7 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* Advanced Background Effects */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        .geometric-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.02);
+            animation: float 25s infinite linear;
+        }
+
+        .shape.circle {
+            border-radius: 50%;
+        }
+
+        .shape.square {
+            border-radius: 8px;
+            transform: rotate(45deg);
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            right: -100px;
+            animation-delay: -8s;
+        }
+
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 30%;
+            left: 5%;
+            animation-delay: -16s;
+        }
+
+        .shape:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: -24s;
+        }
+
+        .shape:nth-child(5) {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 70%;
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            25% { transform: translateY(-30px) rotate(90deg); opacity: 0.5; }
+            50% { transform: translateY(-60px) rotate(180deg); opacity: 0.3; }
+            75% { transform: translateY(-30px) rotate(270deg); opacity: 0.5; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.3; }
+        }
+
+        /* Header - Netflix Inspired */
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a0408 25%, #2d0610 50%, #1a0408 75%, #000000 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(229, 9, 20, 0.3);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 32px rgba(229, 9, 20, 0.15);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 28px;
+            text-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #e50914;
+            text-shadow: 0 0 20px rgba(229, 9, 20, 0.8);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #e50914, #b20710);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 8px 32px rgba(229, 9, 20, 0.5);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .logo-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 48px rgba(229, 9, 20, 0.7);
+            border-color: rgba(229, 9, 20, 0.6);
+        }
+
+        .interview-badge {
+            background: rgba(229, 9, 20, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .interview-badge:hover {
+            background: rgba(229, 9, 20, 0.2);
+            border-color: rgba(229, 9, 20, 0.5);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #e50914;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 3rem;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Interview Panel */
+        .interview-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: 
+                0 32px 80px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interview-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #8b5cf6, #3b82f6, #10b981, #f59e0b);
+            background-size: 300% 100%;
+            animation: gradient-shift 4s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .welcome-section {
+            margin-bottom: 3rem;
+        }
+
+        .interview-title {
+            font-size: 56px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1e293b 0%, #475569 50%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
+        .interview-subtitle {
+            font-size: 20px;
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .interview-description {
+            font-size: 16px;
+            color: #6b7280;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Voice Interface */
+        .voice-interface {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .voice-status-display {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .status-idle .status-indicator {
+            background: #94a3b8;
+            box-shadow: 0 0 0 6px rgba(148, 163, 184, 0.2);
+        }
+
+        .status-connecting .status-indicator {
+            background: #f59e0b;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.2);
+        }
+
+        .status-active .status-indicator {
+            background: #10b981;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .session-timer {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        /* Voice Visualizer */
+        .voice-visualizer-container {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .voice-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .voice-bar {
+            width: 6px;
+            background: linear-gradient(to top, #8b5cf6, #a855f7, #c084fc);
+            border-radius: 3px;
+            animation: voice-wave 1.8s ease-in-out infinite;
+            opacity: 0.4;
+        }
+
+        .voice-bar:nth-child(1) { height: 12px; animation-delay: 0.0s; }
+        .voice-bar:nth-child(2) { height: 24px; animation-delay: 0.1s; }
+        .voice-bar:nth-child(3) { height: 36px; animation-delay: 0.2s; }
+        .voice-bar:nth-child(4) { height: 48px; animation-delay: 0.3s; }
+        .voice-bar:nth-child(5) { height: 60px; animation-delay: 0.4s; }
+        .voice-bar:nth-child(6) { height: 72px; animation-delay: 0.5s; }
+        .voice-bar:nth-child(7) { height: 60px; animation-delay: 0.6s; }
+        .voice-bar:nth-child(8) { height: 48px; animation-delay: 0.7s; }
+        .voice-bar:nth-child(9) { height: 36px; animation-delay: 0.8s; }
+        .voice-bar:nth-child(10) { height: 24px; animation-delay: 0.9s; }
+        .voice-bar:nth-child(11) { height: 12px; animation-delay: 1.0s; }
+
+        @keyframes voice-wave {
+            0%, 100% { 
+                transform: scaleY(0.3);
+                opacity: 0.4;
+            }
+            50% { 
+                transform: scaleY(1.2);
+                opacity: 1;
+            }
+        }
+
+        .active .voice-bar {
+            animation-duration: 0.8s;
+            background: linear-gradient(to top, #10b981, #34d399, #6ee7b7);
+        }
+
+        /* Control Buttons */
+        .interview-controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 18px 36px;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            justify-content: center;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-end {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-end:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            border-top: 3px solid #10b981;
+            animation: spin 1s linear infinite;
+            margin-left: 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Transcription Panel */
+        .transcription-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 
+                0 32px 80px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 180px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transcription-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+            background-size: 300% 100%;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        .transcription-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .transcription-title {
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transcription-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #10b981;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .transcription-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            scroll-behavior: smooth;
+        }
+
+        .transcription-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transcription-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .transcription-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .transcription-entry {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border-left: 4px solid transparent;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transcription-entry.ai-interviewer {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-left-color: #3b82f6;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .transcription-entry.candidate {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-left-color: #10b981;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .transcript-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .speaker-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .speaker-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+
+        .ai-interviewer .speaker-avatar {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .candidate .speaker-avatar {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .speaker-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .ai-interviewer .speaker-name {
+            color: #3b82f6;
+        }
+
+        .candidate .speaker-name {
+            color: #10b981;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .transcript-text {
+            color: #374151;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        /* Stats Footer */
+        .stats-footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .transcription-panel {
+                order: 2;
+                max-height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-container {
+                padding: 2rem 1rem;
+            }
+            
+            .interview-panel,
+            .transcription-panel {
+                padding: 2rem 1.5rem;
+            }
+            
+            .interview-title {
+                font-size: 36px;
+            }
+            
+            .interview-controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-overlay"></div>
+    <div class="geometric-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape circle"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                Interview Platform
+            </div>
+            <div class="interview-badge">
+                <div class="status-dot"></div>
+                Live Assessment Ready
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Interview Panel -->
+        <section class="interview-panel">
+            <div class="welcome-section">
+                <h1 class="interview-title">AI Interview</h1>
+                <p class="interview-subtitle">Professional Technical Assessment</p>
+                <p class="interview-description">
+                    Welcome to your personalized AI interview session. Our advanced AI interviewer will assess your skills through natural conversation. Please ensure you're in a quiet environment with a working microphone.
+                </p>
+            </div>
+
+            <div class="voice-interface">
+                <div class="voice-status-display" id="voiceStatusDisplay">
+                    <div class="status-header">
+                        <div class="status-indicator" id="statusIndicator"></div>
+                        <div class="status-text" id="statusText">Ready to begin</div>
+                        <div class="loader" id="loader" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="session-timer" id="sessionTimer">00:00</div>
+
+                    <div class="voice-visualizer-container" id="voiceVisualizerContainer" style="display: none;">
+                        <div class="voice-visualizer" id="voiceVisualizer">
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                            <div class="voice-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interview-controls">
+                    <button class="btn btn-start" id="startBtn">
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                        </svg>
+                        Start Interview
+                    </button>
+                    <button class="btn btn-end" id="endBtn" disabled>
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 3l-6 6m0 0V4m0 5h5M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"/>
+                        </svg>
+                        End Interview
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transcription Panel -->
+        <aside class="transcription-panel">
+            <div class="transcription-header">
+                <div class="transcription-title">
+                    <div class="transcription-icon">📝</div>
+                    Live Transcription
+                </div>
+                <div class="live-status" id="liveStatus" style="display: none;">
+                    <div class="live-indicator"></div>
+                    Live Recording
+                </div>
+            </div>
+
+            <div class="transcription-content" id="transcriptionContent">
+                <div class="empty-state">
+                    <div class="empty-icon">🎤</div>
+                    <div class="empty-text">Conversation will appear here once the interview starts</div>
+                </div>
+            </div>
+
+            <div class="stats-footer">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTime">00:00</div>
+                        <div class="stat-label">Duration</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="wordsSpoken">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="exchanges">0</div>
+                        <div class="stat-label">Exchanges</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Load Retell SDK -->
+    <script src="js/retell-sdk.bundle.js"></script>
+    <script>
+        class AIInterviewSystem {
+            constructor() {
+                this.client = null;
+                this.startTime = null;
+                this.timer = null;
+                this.wordsCount = 0;
+                this.exchangeCount = 0;
+                this.isActive = false;
+                
+                this.elements = {
+                    startBtn: document.getElementById('startBtn'),
+                    endBtn: document.getElementById('endBtn'),
+                    voiceStatusDisplay: document.getElementById('voiceStatusDisplay'),
+                    statusIndicator: document.getElementById('statusIndicator'),
+                    statusText: document.getElementById('statusText'),
+                    sessionTimer: document.getElementById('sessionTimer'),
+                    voiceVisualizerContainer: document.getElementById('voiceVisualizerContainer'),
+                    voiceVisualizer: document.getElementById('voiceVisualizer'),
+                    transcriptionContent: document.getElementById('transcriptionContent'),
+                    liveStatus: document.getElementById('liveStatus'),
+                    totalTime: document.getElementById('totalTime'),
+                    wordsSpoken: document.getElementById('wordsSpoken'),
+                    exchanges: document.getElementById('exchanges'),
+                    loader: document.getElementById('loader')
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.elements.startBtn.onclick = () => this.startInterview();
+                this.elements.endBtn.onclick = () => this.endInterview();
+            }
+
+            showLoader() {
+                this.elements.loader.style.display = 'inline-block';
+            }
+
+            hideLoader() {
+                this.elements.loader.style.display = 'none';
+            }
+
+            updateStatus(status, text) {
+                this.elements.voiceStatusDisplay.className = `voice-status-display status-${status}`;
+                this.elements.statusText.textContent = text;
+                
+                if (status === 'connecting') {
+                    this.showLoader();
+                } else {
+                    this.hideLoader();
+                }
+                
+                if (status === 'active') {
+                    this.elements.voiceVisualizerContainer.style.display = 'flex';
+                    this.elements.voiceVisualizer.className = 'voice-visualizer active';
+                    this.elements.liveStatus.style.display = 'flex';
+                } else {
+                    this.elements.voiceVisualizerContainer.style.display = 'none';
+                    this.elements.liveStatus.style.display = 'none';
+                }
+            }
+
+            startTimer() {
+                this.startTime = Date.now();
+                this.timer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    this.elements.sessionTimer.textContent = timeString;
+                    this.elements.totalTime.textContent = timeString;
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+            }
+
+            clearTranscription() {
+                this.elements.transcriptionContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🎤</div>
+                        <div class="empty-text">Conversation will appear here once the interview starts</div>
+                    </div>
+                `;
+            }
+
+            addTranscription(speaker, text, isPartial = false) {
+                // Validate inputs
+                if (!speaker || !text || typeof text !== 'string' || !text.trim()) {
+                    console.log('Invalid transcription data, skipping:', { speaker, text, isPartial });
+                    return;
+                }
+
+                // Remove empty state if it exists
+                const emptyState = this.elements.transcriptionContent.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.remove();
+                }
+
+                const now = new Date();
+                const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                
+                // Check if this is an update to the last entry (for partial transcripts)
+                const lastEntry = this.elements.transcriptionContent.lastElementChild;
+                const isUpdate = lastEntry && lastEntry.classList.contains(speaker) && isPartial;
+                
+                if (isUpdate) {
+                    // Update existing entry
+                    const textElement = lastEntry.querySelector('.transcript-text');
+                    if (textElement) {
+                        textElement.textContent = text.trim();
+                    }
+                } else {
+                    // Create new entry
+                    const entry = document.createElement('div');
+                    entry.className = `transcription-entry ${speaker}`;
+                    
+                    const speakerName = speaker === 'ai-interviewer' ? 'AI Interviewer' : 'Candidate';
+                    const avatar = speaker === 'ai-interviewer' ? 'AI' : 'C';
+                    
+                    entry.innerHTML = `
+                        <div class="transcript-header">
+                            <div class="speaker-info">
+                                <div class="speaker-avatar">${avatar}</div>
+                                <div class="speaker-name">${speakerName}</div>
+                            </div>
+                            <div class="timestamp">${timestamp}</div>
+                        </div>
+                        <div class="transcript-text">${text.trim()}</div>
+                    `;
+
+                    this.elements.transcriptionContent.appendChild(entry);
+                    
+                    // Update stats only for complete entries
+                    if (!isPartial) {
+                        this.exchangeCount++;
+                        this.elements.exchanges.textContent = this.exchangeCount;
+                        
+                        if (speaker === 'candidate') {
+                            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+                            this.wordsCount += words.length;
+                            this.elements.wordsSpoken.textContent = this.wordsCount;
+                        }
+                    }
+                }
+
+                // Auto-scroll to bottom
+                this.elements.transcriptionContent.scrollTop = this.elements.transcriptionContent.scrollHeight;
+            }
+
+            async getToken() {
+                try {
+                    const response = await fetch("/api/retell/create-web-call", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        // agentId is now handled in the backend
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to connect to interview service');
+                    }
+                    
+                    const data = await response.json();
+                    return data.access_token;
+                } catch (error) {
+                    console.error('Token fetch error:', error);
+                    throw new Error('Unable to connect to interview service');
+                }
+            }
+
+            async startInterview() {
+                try {
+                    this.updateStatus('connecting', 'Connecting to AI interviewer');
+                    this.elements.startBtn.disabled = true;
+                    
+                    const token = await this.getToken();
+                    
+                    this.client = window.createRetellClient();
+                    
+                    this.client.on("call_started", () => {
+                        this.updateStatus('active', 'Interview in progress');
+                        this.elements.endBtn.disabled = false;
+                        this.startTimer();
+                        this.isActive = true;
+                        this.clearTranscription();
+                    });
+                    
+                    this.client.on("call_ended", () => {
+                        this.updateStatus('idle', 'Interview completed');
+                        this.elements.startBtn.disabled = false;
+                        this.elements.endBtn.disabled = true;
+                        this.stopTimer();
+                        this.isActive = false;
+                        
+                        // Add completion message
+                        this.addTranscription('ai-interviewer', 'Interview session completed. Thank you for your time!');
+                        
+                        // Navigate to dashboard with results after a short delay
+                        setTimeout(() => {
+                            window.location.href = 'interview-generator.html';
+                        }, 3000);
+                    });
+                    
+                    this.client.on("update", (update) => {
+                        try {
+                            // Handle real-time transcription from Retell AI
+                            if (update.transcript && update.transcript.trim()) {
+                                const transcript = update.transcript.trim();
+                                
+                                // Determine speaker based on Retell AI update
+                                // This is a simplified approach - in production you'd have more sophisticated speaker detection
+                                const speaker = this.determineSpeaker(update);
+                                
+                                // Add transcription entry
+                                this.addTranscription(speaker, transcript, update.is_partial || false);
+                            }
+                        } catch (error) {
+                            console.error('Transcription update error:', error);
+                        }
+                    });
+                    
+                    this.client.on("error", (error) => {
+                        console.error('Interview system error:', error);
+                        this.updateStatus('idle', 'Connection lost');
+                        this.elements.startBtn.disabled = false;
+                        this.elements.endBtn.disabled = true;
+                        this.stopTimer();
+                        this.isActive = false;
+                    });
+
+                    await this.client.startCall({ 
+                        accessToken: token, 
+                        sampleRate: 24000 
+                    });
+                    
+                } catch (error) {
+                    console.error('Start interview error:', error);
+                    this.updateStatus('idle', 'Failed to start interview');
+                    this.elements.startBtn.disabled = false;
+                    this.elements.endBtn.disabled = true;
+                }
+            }
+
+            endInterview() {
+                if (this.client && this.isActive) {
+                    try {
+                        this.client.stopCall();
+                    } catch (error) {
+                        console.error('End interview error:', error);
+                        // Force UI reset
+                        this.updateStatus('idle', 'Interview ended');
+                        this.elements.startBtn.disabled = false;
+                        this.elements.endBtn.disabled = true;
+                        this.stopTimer();
+                        this.isActive = false;
+                    }
+                }
+            }
+
+            determineSpeaker(update) {
+                // Simple speaker detection logic
+                // In a real implementation, this would be more sophisticated
+                // You might use update.role, update.speaker, or analyze the content
+                
+                // For now, we'll use a simple heuristic:
+                // If it's a question or starts with common AI interviewer phrases, it's the interviewer
+                const text = update.transcript.toLowerCase();
+                const interviewerPhrases = [
+                    'tell me about', 'can you explain', 'what is your', 'how do you',
+                    'describe your', 'what would you', 'why did you', 'how would you'
+                ];
+                
+                const isQuestion = text.includes('?');
+                const hasInterviewerPhrase = interviewerPhrases.some(phrase => text.includes(phrase));
+                
+                if (isQuestion || hasInterviewerPhrase) {
+                    return 'ai-interviewer';
+                } else {
+                    return 'candidate';
+                }
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                new AIInterviewSystem();
+            } catch (error) {
+                console.error('Interview system initialization error:', error);
+                document.getElementById('statusText').textContent = 'System initialization error';
+            }
+        });
+    </script>
+</body>
+</html>
+

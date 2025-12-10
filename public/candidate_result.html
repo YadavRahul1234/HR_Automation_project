@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Report - AI Assessment Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0c0a1e 0%,
+          #1a1b3a 20%,
+          #2d1b69 40%,
+          #4c1d95 60%,
+          #7c3aed 80%,
+          #a855f7 100%
+        );
+        min-height: 100vh;
+        color: #333;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Background Effects */
+      .bg-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 25% 25%,
+            rgba(139, 92, 246, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(59, 130, 246, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(16, 185, 129, 0.1) 0%,
+            transparent 50%
+          );
+        z-index: -1;
+      }
+
+      /* Header - Netflix Inspired */
+      .header {
+        background: linear-gradient(
+          135deg,
+          #000000 0%,
+          #1a0408 25%,
+          #2d0610 50%,
+          #1a0408 75%,
+          #000000 100%
+        );
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(229, 9, 20, 0.3);
+        padding: 1.5rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 32px rgba(229, 9, 20, 0.15);
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 28px;
+        text-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .logo:hover {
+        color: #e50914;
+        text-shadow: 0 0 20px rgba(229, 9, 20, 0.8);
+      }
+
+      .logo-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #e50914, #b20710);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        box-shadow: 0 8px 32px rgba(229, 9, 20, 0.5);
+        transition: all 0.3s ease;
+        border: 2px solid rgba(229, 9, 20, 0.3);
+      }
+
+      .logo-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 48px rgba(229, 9, 20, 0.7);
+        border-color: rgba(229, 9, 20, 0.6);
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #e50914, #b20710);
+        color: white;
+        box-shadow: 0 4px 16px rgba(229, 9, 20, 0.4);
+        border: 1px solid rgba(229, 9, 20, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      .btn-secondary {
+        background: rgba(229, 9, 20, 0.1);
+        color: white;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(229, 9, 20, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(229, 9, 20, 0.2);
+        border-color: rgba(229, 9, 20, 0.5);
+        color: #ffffff;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-primary:hover {
+        box-shadow: 0 8px 32px rgba(229, 9, 20, 0.6);
+        background: linear-gradient(135deg, #ff1e2d, #e50914);
+      }
+
+      /* Main Content */
+      .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+      }
+
+      .content-area {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      /* Card Base Styles */
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(30px);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1),
+          0 0 0 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #8b5cf6, #3b82f6, #10b981, #f59e0b);
+        background-size: 300% 100%;
+        animation: gradient-shift 4s ease infinite;
+      }
+
+      @keyframes gradient-shift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      /* Interview Summary Card */
+      .interview-summary {
+        grid-column: 1 / -1;
+      }
+
+      .summary-header {
+        display: flex;
+        justify-content: between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        gap: 2rem;
+      }
+
+      .candidate-info {
+        flex: 1;
+      }
+
+      .candidate-name {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+      }
+
+      .candidate-details {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .overall-score {
+        text-align: center;
+        min-width: 200px;
+      }
+
+      .score-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          #10b981 0deg,
+          #10b981 var(--percentage),
+          #e5e7eb var(--percentage),
+          #e5e7eb 360deg
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        position: relative;
+      }
+
+      .score-circle::before {
+        content: "";
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+      }
+
+      .score-value {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1e293b;
+        z-index: 1;
+      }
+
+      .score-label {
+        font-size: 1rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Status Badge */
+      .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 1rem;
+      }
+
+      .status-recommended {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+      }
+
+      .status-not-recommended {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+        color: white;
+      }
+
+      .status-review {
+        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        color: white;
+      }
+
+      /* Skill Scores Grid */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .skill-item {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 16px;
+        border-left: 4px solid transparent;
+      }
+
+      .skill-item.technical {
+        border-left-color: #3b82f6;
+      }
+      .skill-item.communication {
+        border-left-color: #10b981;
+      }
+      .skill-item.problem-solving {
+        border-left-color: #f59e0b;
+      }
+      .skill-item.cultural {
+        border-left-color: #8b5cf6;
+      }
+
+      .skill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .skill-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #374151;
+      }
+
+      .skill-score {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: #1e293b;
+      }
+
+      .skill-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .skill-progress {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1s ease-out;
+        animation: fill-bar 1s ease-out;
+      }
+
+      .skill-item.technical .skill-progress {
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      }
+      .skill-item.communication .skill-progress {
+        background: linear-gradient(90deg, #10b981, #34d399);
+      }
+      .skill-item.problem-solving .skill-progress {
+        background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      }
+      .skill-item.cultural .skill-progress {
+        background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+      }
+
+      @keyframes fill-bar {
+        from {
+          width: 0;
+        }
+      }
+
+      /* Executive Summary */
+      .executive-summary {
+        background: #f0f9ff;
+        border: 2px solid #0ea5e9;
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 2rem 0;
+      }
+
+      .executive-summary h3 {
+        color: #0c4a6e;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .executive-summary p {
+        color: #0c4a6e;
+        line-height: 1.6;
+        font-size: 1rem;
+      }
+
+      /* Strengths & Concerns */
+      .assessment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .assessment-section h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .strengths h3 {
+        color: #10b981;
+      }
+      .concerns h3 {
+        color: #ef4444;
+      }
+
+      .assessment-list {
+        list-style: none;
+      }
+
+      .assessment-list li {
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .strengths .assessment-list li {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 3px solid #10b981;
+      }
+
+      .concerns .assessment-list li {
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 3px solid #ef4444;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .sidebar .card {
+        padding: 1.5rem;
+      }
+
+      /* Interview Details */
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 0.875rem;
+      }
+
+      .detail-value {
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      /* Charts */
+      .chart-container {
+        position: relative;
+        height: 200px;
+        margin: 1rem 0;
+      }
+
+      /* Actions */
+      .actions-card .btn {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .main-container {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .sidebar {
+          order: -1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-container {
+          padding: 1rem;
+        }
+
+        .summary-header {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .candidate-details {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .skills-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .assessment-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .candidate-name {
+          font-size: 2rem;
+        }
+      }
+
+      /* Animations */
+      .card {
+        animation: slideInUp 0.6s ease-out;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Loading state */
+      .loading {
+        text-align: center;
+        padding: 3rem;
+        color: #64748b;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f4f6;
+        border-top: 4px solid #8b5cf6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-overlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="nav-container">
+        <div class="logo">
+          <div class="logo-icon">AI</div>
+          Interview Report
+        </div>
+        <div class="nav-actions">
+          <a href="admin_dashboard.html" class="btn btn-secondary">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Admin Dashboard
+          </a>
+          <a href="interview.html" class="btn btn-primary">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            New Interview
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <div class="content-area">
+        <!-- Interview Summary Card -->
+        <div class="card interview-summary">
+          <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading interview report...</p>
+          </div>
+
+          <div id="reportContent" style="display: none">
+            <div class="summary-header">
+              <div class="candidate-info">
+                <h1 class="candidate-name" id="candidateName">John Doe</h1>
+                <div class="candidate-details">
+                  <div class="detail-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span id="candidateEmail">john@example.com</span>
+                  </div>
+                  <div class="detail-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v2M8 6V4m0 2v2m8-2v2"
+                      />
+                    </svg>
+                    <span id="position">Software Developer</span>
+                  </div>
+                  <div class="detail-item">
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span id="interviewDuration">25 minutes</span>
+                  </div>
+                </div>
+                <div
+                  id="recommendationBadge"
+                  class="status-badge status-recommended"
+                >
+                  Recommended for Hire
+                </div>
+              </div>
+
+              <div class="overall-score">
+                <div class="score-circle" id="scoreCircle">
+                  <div class="score-value" id="overallScore">8.5</div>
+                </div>
+                <div class="score-label">Overall Score</div>
+              </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="executive-summary">
+              <h3>
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Executive Summary
+              </h3>
+              <p id="executiveSummary">
+                The candidate demonstrates strong technical skills and
+                problem-solving abilities. Communication is clear and
+                professional. Shows good understanding of software development
+                principles and best practices.
+              </p>
+            </div>
+
+            <!-- Skills Assessment -->
+            <div class="skills-grid">
+              <div class="skill-item technical">
+                <div class="skill-header">
+                  <div class="skill-name">Technical Skills</div>
+                  <div class="skill-score" id="technicalScore">8.5</div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" id="technicalProgress"></div>
+                </div>
+              </div>
+
+              <div class="skill-item communication">
+                <div class="skill-header">
+                  <div class="skill-name">Communication</div>
+                  <div class="skill-score" id="communicationScore">9.0</div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" id="communicationProgress"></div>
+                </div>
+              </div>
+
+              <div class="skill-item problem-solving">
+                <div class="skill-header">
+                  <div class="skill-name">Problem Solving</div>
+                  <div class="skill-score" id="problemSolvingScore">7.5</div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" id="problemSolvingProgress"></div>
+                </div>
+              </div>
+
+              <div class="skill-item cultural">
+                <div class="skill-header">
+                  <div class="skill-name">Cultural Fit</div>
+                  <div class="skill-score" id="culturalFitScore">8.0</div>
+                </div>
+                <div class="skill-bar">
+                  <div class="skill-progress" id="culturalFitProgress"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Strengths & Concerns -->
+            <div class="assessment-grid">
+              <div class="strengths">
+                <h3>
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Key Strengths
+                </h3>
+                <ul class="assessment-list" id="strengthsList">
+                  <li>Strong technical foundation</li>
+                  <li>Clear communication skills</li>
+                  <li>Problem-solving approach</li>
+                </ul>
+              </div>
+
+              <div class="concerns">
+                <h3>
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                    />
+                  </svg>
+                  Areas of Concern
+                </h3>
+                <ul class="assessment-list" id="concernsList">
+                  <li>Limited experience with advanced frameworks</li>
+                  <li>Could improve system design knowledge</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Interview Details -->
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: #1e293b; font-size: 1.25rem">
+            Interview Details
+          </h3>
+          <div class="detail-row">
+            <span class="detail-label">Date</span>
+            <span class="detail-value" id="interviewDate">Today</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Duration</span>
+            <span class="detail-value" id="duration">25:30</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Interviewer</span>
+            <span class="detail-value">AI Assistant</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Type</span>
+            <span class="detail-value">Technical</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value" style="color: #10b981">Completed</span>
+          </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="card">
+          <h3 style="margin-bottom: 1rem; color: #1e293b; font-size: 1.25rem">
+            Performance Overview
+          </h3>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card actions-card">
+          <h3 style="margin-bottom: 1rem; color: #1e293b; font-size: 1.25rem">
+            Actions
+          </h3>
+          <button class="btn btn-primary" onclick="downloadReport()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Download Report
+          </button>
+
+          <button class="btn btn-secondary" onclick="scheduleFollowUp()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Schedule Follow-up
+          </button>
+
+          <button class="btn btn-secondary" onclick="shareReport()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+              />
+            </svg>
+            Share Report
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      class InterviewerDashboard {
+        constructor() {
+          this.candidateData = {};
+          this.init();
+        }
+
+        init() {
+          setTimeout(() => {
+            this.loadInterviewData();
+          }, 1000);
+        }
+
+        async loadInterviewData() {
+          // Get data from URL parameters or localStorage
+          const urlParams = new URLSearchParams(window.location.search);
+          const candidateId = urlParams.get("candidate") || "latest";
+
+          if (candidateId === "latest" || candidateId === "current") {
+            // Use mock data for latest/current interviews
+            this.candidateData = this.getMockData();
+            this.displayReport();
+            this.initializeCharts();
+          } else {
+            // Fetch specific candidate from Airtable
+            await this.fetchCandidateData(candidateId);
+          }
+        }
+
+        async fetchCandidateData(candidateId) {
+          try {
+            console.log("Fetching candidate data for ID:", candidateId);
+
+                    const url = `/api/admin/candidates/${candidateId}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+              console.error("Failed to fetch candidate:", response.status);
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const record = await response.json();
+            console.log("Fetched candidate record:", record);
+
+            // Map Airtable fields to dashboard format
+            this.candidateData = {
+              candidateName:
+                record.fields.candidateName ||
+                record.fields.Name ||
+                "Unknown Candidate",
+              candidateEmail:
+                record.fields.candidateEmail || record.fields.email || "N/A",
+              position:
+                record.fields.positionApplied ||
+                record.fields.profession ||
+                "N/A",
+              interviewDate: record.fields.reportGeneratedAt
+                ? new Date(record.fields.reportGeneratedAt).toLocaleDateString()
+                : new Date().toLocaleDateString(),
+              interviewDuration: record.fields.interviewDuration || "25:00",
+              overallScore: parseFloat(record.fields.overallScore) || 0,
+              technicalScore:
+                parseFloat(record.fields.technicalSkillsScore) ||
+                parseFloat(record.fields.overallScore) * 0.9 ||
+                0,
+              communicationScore:
+                parseFloat(record.fields.communicationScore) ||
+                parseFloat(record.fields.overallScore) * 0.8 ||
+                0,
+              problemSolvingScore:
+                parseFloat(record.fields.problemSolvingScore) ||
+                parseFloat(record.fields.overallScore) * 0.85 ||
+                0,
+              culturalFitScore:
+                parseFloat(record.fields.culturalFitScore) ||
+                parseFloat(record.fields.overallScore) * 0.75 ||
+                0,
+              recommendation: this.mapStatusToRecommendation(
+                record.fields.status
+              ),
+              executiveSummary:
+                record.fields.executiveSummary ||
+                record.fields.Experience ||
+                "No summary available.",
+              strengths: this.parseArrayField(record.fields.strengths) ||
+                this.parseArrayField(record.fields.skills) || [
+                  "Strong technical foundation",
+                ],
+              concerns: this.parseArrayField(record.fields.concerns) || [
+                "No concerns noted",
+              ],
+            };
+
+            this.displayReport();
+            this.initializeCharts();
+          } catch (error) {
+            console.error("Error fetching candidate data:", error);
+            // Fall back to mock data
+            this.candidateData = this.getMockData();
+            this.displayReport();
+            this.initializeCharts();
+          }
+        }
+
+        mapStatusToRecommendation(status) {
+          if (!status) return "review";
+          const statusLower = status.toLowerCase();
+          if (
+            statusLower.includes("select") ||
+            statusLower.includes("recommend")
+          ) {
+            return "recommended";
+          } else if (statusLower.includes("reject")) {
+            return "not-recommended";
+          }
+          return "review";
+        }
+
+        parseArrayField(field) {
+          if (!field) return null;
+          if (Array.isArray(field)) return field;
+          if (typeof field === "string") {
+            // Try to parse as JSON array first
+            try {
+              const parsed = JSON.parse(field);
+              if (Array.isArray(parsed)) return parsed;
+            } catch (e) {
+              // If not JSON, split by common delimiters
+              return field
+                .split(/[,;\n]/)
+                .map((item) => item.trim())
+                .filter((item) => item.length > 0);
+            }
+          }
+          return [field.toString()];
+        }
+
+        getMockData() {
+          // This would typically come from your interview completion data
+          return {
+            candidateName: "Sarah Johnson",
+            candidateEmail: "sarah.johnson@email.com",
+            position: "Senior Frontend Developer",
+            interviewDate: new Date().toLocaleDateString(),
+            interviewDuration: "28:45",
+            overallScore: 8.7,
+            technicalScore: 9.0,
+            communicationScore: 8.5,
+            problemSolvingScore: 8.0,
+            culturalFitScore: 9.0,
+            recommendation: "recommended", // recommended, not-recommended, review
+            executiveSummary:
+              "Sarah demonstrates exceptional frontend development skills with strong React and TypeScript expertise. Her communication is clear and professional, and she shows excellent problem-solving abilities. She would be a great addition to the team.",
+            strengths: [
+              "Deep understanding of React ecosystem",
+              "Strong TypeScript knowledge",
+              "Excellent code architecture decisions",
+              "Clear communication style",
+              "Good understanding of performance optimization",
+            ],
+            concerns: [
+              "Limited experience with backend technologies",
+              "Could benefit from more system design exposure",
+            ],
+          };
+        }
+
+        displayReport() {
+          const data = this.candidateData;
+
+          // Hide loading and show content
+          document.getElementById("loadingState").style.display = "none";
+          document.getElementById("reportContent").style.display = "block";
+
+          // Populate basic info
+          document.getElementById("candidateName").textContent =
+            data.candidateName;
+          document.getElementById("candidateEmail").textContent =
+            data.candidateEmail;
+          document.getElementById("position").textContent = data.position;
+          document.getElementById("interviewDuration").textContent =
+            data.interviewDuration;
+          document.getElementById("interviewDate").textContent =
+            data.interviewDate;
+          document.getElementById("duration").textContent =
+            data.interviewDuration;
+
+          // Overall score with animation
+          const scoreCircle = document.getElementById("scoreCircle");
+          const scoreValue = document.getElementById("overallScore");
+          const percentage = (data.overallScore / 10) * 360;
+
+          scoreCircle.style.setProperty("--percentage", `${percentage}deg`);
+          scoreValue.textContent = data.overallScore.toFixed(1);
+
+          // Recommendation badge
+          const badge = document.getElementById("recommendationBadge");
+          if (data.recommendation === "recommended") {
+            badge.className = "status-badge status-recommended";
+            badge.textContent = "Recommended for Hire";
+          } else if (data.recommendation === "not-recommended") {
+            badge.className = "status-badge status-not-recommended";
+            badge.textContent = "Not Recommended";
+          } else {
+            badge.className = "status-badge status-review";
+            badge.textContent = "Requires Review";
+          }
+
+          // Executive summary
+          document.getElementById("executiveSummary").textContent =
+            data.executiveSummary;
+
+          // Individual skill scores and progress bars
+          this.updateSkillScore("technical", data.technicalScore);
+          this.updateSkillScore("communication", data.communicationScore);
+          this.updateSkillScore("problemSolving", data.problemSolvingScore);
+          this.updateSkillScore("culturalFit", data.culturalFitScore);
+
+          // Strengths and concerns
+          this.populateList("strengthsList", data.strengths);
+          this.populateList("concernsList", data.concerns);
+        }
+
+        updateSkillScore(skillType, score) {
+          document.getElementById(`${skillType}Score`).textContent =
+            score.toFixed(1);
+          const progressBar = document.getElementById(`${skillType}Progress`);
+          const percentage = (score / 10) * 100;
+
+          setTimeout(() => {
+            progressBar.style.width = `${percentage}%`;
+          }, 500);
+        }
+
+        populateList(listId, items) {
+          const list = document.getElementById(listId);
+          list.innerHTML = "";
+
+          items.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        }
+
+        initializeCharts() {
+          const ctx = document
+            .getElementById("performanceChart")
+            .getContext("2d");
+
+          new Chart(ctx, {
+            type: "radar",
+            data: {
+              labels: [
+                "Technical",
+                "Communication",
+                "Problem Solving",
+                "Cultural Fit",
+              ],
+              datasets: [
+                {
+                  label: "Performance",
+                  data: [
+                    this.candidateData.technicalScore,
+                    this.candidateData.communicationScore,
+                    this.candidateData.problemSolvingScore,
+                    this.candidateData.culturalFitScore,
+                  ],
+                  backgroundColor: "rgba(139, 92, 246, 0.2)",
+                  borderColor: "rgba(139, 92, 246, 1)",
+                  borderWidth: 2,
+                  pointBackgroundColor: "rgba(139, 92, 246, 1)",
+                  pointBorderColor: "#fff",
+                  pointBorderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                r: {
+                  beginAtZero: true,
+                  max: 10,
+                  ticks: {
+                    stepSize: 2,
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+            },
+          });
+        }
+      }
+
+      // Action functions
+      function downloadReport() {
+        // Generate PDF or export functionality
+        alert("Download report functionality would be implemented here");
+      }
+
+      function scheduleFollowUp() {
+        alert("Schedule follow-up functionality would be implemented here");
+      }
+
+      function shareReport() {
+        if (navigator.share) {
+          navigator.share({
+            title: "Interview Report",
+            text: "Interview report for candidate",
+            url: window.location.href,
+          });
+        } else {
+          // Fallback - copy to clipboard
+          navigator.clipboard.writeText(window.location.href);
+          alert("Report link copied to clipboard");
+        }
+      }
+
+      // Initialize dashboard when DOM is loaded
+      document.addEventListener("DOMContentLoaded", () => {
+        new InterviewerDashboard();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LinkedIn Candidate Scraper</title>
+    <link rel="stylesheet" href="style.css?v=2" />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <h1>🔍 LinkedIn Candidate Scraper</h1>
+      <p>
+        Extract candidate information from LinkedIn profiles and search for
+        potential candidates
+      </p>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <a href="/" class="dashboard-btn">← Back to Dashboard</a>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+      <div class="user-grid">
+        <div class="user-card" style="grid-column: 1 / -1">
+          <div class="scraper-tabs">
+            <button
+              class="scraper-tab-btn active"
+              onclick="switchScraperTab('single')"
+              id="scraperTabSingle"
+            >
+              Single Profile
+            </button>
+            <button
+              class="scraper-tab-btn"
+              onclick="switchScraperTab('search')"
+              id="scraperTabSearch"
+            >
+              Candidate Search
+            </button>
+            <button
+              class="scraper-tab-btn"
+              onclick="switchScraperTab('all')"
+              id="scraperTabAll"
+            >
+              View All Candidates
+            </button>
+          </div>
+
+          <!-- Single Profile Tab -->
+          <div id="scraperTabContentSingle" class="scraper-tab-content">
+            <p>
+              Enter a LinkedIn profile URL to scrape and extract comprehensive
+              profile data.
+            </p>
+            <input
+              type="text"
+              id="linkedinUrlInput"
+              placeholder="https://linkedin.com/in/username"
+            />
+            <button
+              class="scraper-btn-primary"
+              onclick="scrapeSingleProfile()"
+              id="scrapeSingleBtn"
+            >
+              🔍 Scrape Profile
+            </button>
+            <div class="loading-modal" id="scrapeLoading">
+              <div class="spinner"></div>
+              <p>Scraping LinkedIn profile and extracting data...</p>
+            </div>
+            <div
+              id="scrapeResult"
+              class="scraper-result"
+              style="display: none"
+            ></div>
+          </div>
+
+          <!-- Candidate Search Tab -->
+          <div
+            id="scraperTabContentSearch"
+            class="scraper-tab-content"
+            style="display: none"
+          >
+            <p>
+              Search for candidates on LinkedIn by role, skills, location, and
+              experience.
+            </p>
+            <div class="scraper-input-grid">
+              <input
+                type="text"
+                id="searchRole"
+                placeholder="Role (e.g. Python Developer)"
+              />
+              <input
+                type="text"
+                id="searchSkills"
+                placeholder="Skills (e.g. Django, Flask)"
+              />
+              <input
+                type="text"
+                id="searchLocation"
+                placeholder="Location (e.g. San Francisco)"
+              />
+              <input
+                type="text"
+                id="searchExperience"
+                placeholder="Experience (e.g. 5 years)"
+              />
+            </div>
+            <button
+              class="scraper-btn-primary"
+              onclick="searchLinkedInCandidates()"
+              id="searchCandidatesBtn"
+            >
+              🔎 Search Candidates
+            </button>
+            <div class="loading-modal" id="searchLoading">
+              <div class="spinner"></div>
+              <p>Searching LinkedIn for candidates...</p>
+            </div>
+            <div
+              id="searchResult"
+              class="scraper-result"
+              style="display: none"
+            ></div>
+          </div>
+
+          <!-- View All Candidates Tab -->
+          <div
+            id="scraperTabContentAll"
+            class="scraper-tab-content"
+            style="display: none"
+          >
+            <p>View all candidates scraped and stored in the local database.</p>
+            <button
+              class="scraper-btn-primary"
+              onclick="loadScrapedCandidates()"
+            >
+              🔄 Refresh Candidates
+            </button>
+            <div class="loading-modal" id="allCandidatesLoading">
+              <div class="spinner"></div>
+              <p>Loading scraped candidates...</p>
+            </div>
+            <div
+              id="allCandidatesResult"
+              class="scraper-result"
+              style="display: none"
+            ></div>
+          </div>
+
+          <div class="error-message" id="scraperError"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts.js?v=3"></script>
+    <script>
+      // Auto-load on page load
+      window.addEventListener("load", function () {
+        // Show results if they exist
+        const scrapeResult = document.getElementById("scrapeResult");
+        const searchResult = document.getElementById("searchResult");
+        const allCandidatesResult = document.getElementById(
+          "allCandidatesResult"
+        );
+
+        if (scrapeResult && scrapeResult.innerHTML.trim()) {
+          scrapeResult.style.display = "block";
+        }
+        if (searchResult && searchResult.innerHTML.trim()) {
+          searchResult.style.display = "block";
+        }
+        if (allCandidatesResult && allCandidatesResult.innerHTML.trim()) {
+          allCandidatesResult.style.display = "block";
+        }
+      });
+
+      // Update result display functions
+      function scrapeSingleProfile() {
+        const url = document.getElementById("linkedinUrlInput").value.trim();
+        if (!url) {
+          showScraperError("Please enter a LinkedIn profile URL");
+          return;
+        }
+
+        const loadingElement = document.getElementById("scrapeLoading");
+        const resultElement = document.getElementById("scrapeResult");
+        const errorElement = document.getElementById("scraperError");
+        const btn = document.getElementById("scrapeSingleBtn");
+
+        loadingElement.classList.add("show");
+        btn.disabled = true;
+        errorElement.classList.remove("show");
+        resultElement.style.display = "none";
+        resultElement.innerHTML = "";
+
+        fetch("/api/scraper/scrape", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.text().then((text) => {
+                throw new Error(text || "Failed to scrape profile");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            loadingElement.classList.remove("show");
+            resultElement.innerHTML = createCandidateCard(data, true);
+            resultElement.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error scraping profile:", error);
+            loadingElement.classList.remove("show");
+            showScraperError(
+              error.message || "Failed to scrape profile. Please try again."
+            );
+          })
+          .finally(() => {
+            btn.disabled = false;
+          });
+      }
+
+      function searchLinkedInCandidates() {
+        const role = document.getElementById("searchRole").value.trim();
+        const skills = document.getElementById("searchSkills").value.trim();
+        const location = document.getElementById("searchLocation").value.trim();
+        const experience = document
+          .getElementById("searchExperience")
+          .value.trim();
+
+        if (!role && !skills) {
+          showScraperError("Please enter at least a role or skills");
+          return;
+        }
+
+        const loadingElement = document.getElementById("searchLoading");
+        const resultElement = document.getElementById("searchResult");
+        const errorElement = document.getElementById("scraperError");
+        const btn = document.getElementById("searchCandidatesBtn");
+
+        loadingElement.classList.add("show");
+        btn.disabled = true;
+        errorElement.classList.remove("show");
+        resultElement.style.display = "none";
+        resultElement.innerHTML = "";
+
+        fetch("/api/scraper/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role, skills, location, experience }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.text().then((text) => {
+                throw new Error(text || "Failed to search candidates");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            loadingElement.classList.remove("show");
+            if (data && data.length > 0) {
+              resultElement.innerHTML = `
+              <h3 style="margin: 0 0 20px 0; color: #10b981;">Found ${
+                data.length
+              } Candidates</h3>
+              <div style="display: grid; gap: 20px;">
+                ${data
+                  .map((candidate) => createCandidateCard(candidate, true))
+                  .join("")}
+              </div>
+            `;
+            } else {
+              resultElement.innerHTML =
+                '<p style="text-align: center; color: #666; padding: 40px 0;">No candidates found matching your criteria.</p>';
+            }
+            resultElement.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error searching candidates:", error);
+            loadingElement.classList.remove("show");
+            showScraperError(
+              error.message || "Failed to search candidates. Please try again."
+            );
+          })
+          .finally(() => {
+            btn.disabled = false;
+          });
+      }
+
+      function loadScrapedCandidates() {
+        const loadingElement = document.getElementById("allCandidatesLoading");
+        const resultElement = document.getElementById("allCandidatesResult");
+        const errorElement = document.getElementById("scraperError");
+
+        loadingElement.classList.add("show");
+        errorElement.classList.remove("show");
+        resultElement.style.display = "none";
+        resultElement.innerHTML = "";
+
+        fetch("/api/scraper/candidates")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to load scraped candidates");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            loadingElement.classList.remove("show");
+            if (data && data.length > 0) {
+              resultElement.innerHTML = `
+              <h3 style="margin: 0 0 20px 0; color: #10b981;">Total Scraped Candidates: ${
+                data.length
+              }</h3>
+              <div style="display: grid; gap: 20px;">
+                ${data
+                  .map((candidate) => createCandidateCard(candidate, false))
+                  .join("")}
+              </div>
+            `;
+            } else {
+              resultElement.innerHTML =
+                '<p style="text-align: center; color: #666; padding: 40px 0;">No scraped candidates found in database.</p>';
+            }
+            resultElement.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error loading scraped candidates:", error);
+            loadingElement.classList.remove("show");
+            showScraperError(
+              error.message || "Failed to load candidates. Please try again."
+            );
+          });
+      }
+    </script>
+  </body>
+</html>

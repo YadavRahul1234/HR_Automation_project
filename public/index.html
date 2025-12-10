@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Interview Questions Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=2" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎯 Admin Dashboard</h1>
+      <p>Manage and view all candidate interview data</p>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-number" id="totalUsers">0</div>
+        <div class="stat-label">Total Candidates</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalQuestions">0</div>
+        <div class="stat-label">Total Questions Generated</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by name, email, or skills..."
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      <button class="refresh-btn" onclick="loadUserData()">🔄 Refresh</button>
+      <button class="export-btn" onclick="exportData()">📥 Export CSV</button>
+      <button class="upload-btn" onclick="openUploadModal()">
+        📤 Upload Resume
+      </button>
+      <button class="delete-selected-btn" onclick="deleteSelected()">
+        🗑️ Delete Selected
+      </button>
+      <button class="delete-all-btn" onclick="deleteAll()">
+        ⚠️ Delete All
+      </button>
+      <button
+        class="dashboard-btn"
+        onclick="window.location.href='admin_dashboard.html'"
+      >
+        📊 Admin Dashboards
+      </button>
+      <button class="scraper-btn" onclick="window.location.href='scraper.html'">
+        🔍 Candidate Info Scraping
+      </button>
+    </div>
+
+    <div class="container">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading candidate data from Airtable...</p>
+      </div>
+
+      <div class="user-grid" id="userGrid"></div>
+
+      <div class="empty-state" id="emptyState" style="display: none">
+        <div class="empty-state-icon">📋</div>
+        <h3>No Candidates Found</h3>
+        <p>No candidate data available yet.</p>
+      </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Candidate Details</h2>
+          <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+      <div class="modal-content" style="max-width: 600px">
+        <div class="modal-header">
+          <h2>📤 Upload New Resume</h2>
+          <button class="close-btn" onclick="closeUploadModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="upload-area-modal" id="uploadAreaModal">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Click to upload or drag and drop</div>
+            <div class="upload-hint">PDF, DOC, DOCX (Max 10MB)</div>
+            <input
+              type="file"
+              id="fileInputModal"
+              accept=".pdf,.doc,.docx"
+              style="display: none"
+            />
+          </div>
+
+          <div class="file-info-modal" id="fileInfoModal">
+            <span class="file-name" id="fileNameModal"></span>
+            <button class="remove-btn-modal" id="removeBtnModal">Remove</button>
+          </div>
+
+          <button class="generate-btn-modal" id="generateBtnModal">
+            Generate Interview Questions
+          </button>
+
+          <div class="loading-modal" id="loadingModal">
+            <div class="spinner"></div>
+            <p>Processing resume and generating interview questions...</p>
+          </div>
+
+          <div class="success-message" id="successMessage">
+            <div style="font-size: 3em; margin-bottom: 15px">✅</div>
+            <h3>Resume Processed Successfully!</h3>
+            <p>The candidate data has been added to Airtable.</p>
+          </div>
+
+          <div class="error-message" id="errorMessage"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regenerate Interview Modal -->
+    <div class="modal" id="regenerateModal">
+      <div class="modal-content" style="max-width: 900px">
+        <div class="modal-header">
+          <h2>🔄 Regenerate AI Interview Questions</h2>
+          <button class="close-btn" onclick="closeRegenerateModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="regenerate-section">
+            <h3>📋 Current Interview Questions</h3>
+            <div id="currentQuestions" class="current-questions-display"></div>
+          </div>
+
+          <div class="regenerate-section">
+            <h3>✏️ Enter Prompt for New Questions</h3>
+            <textarea
+              id="regeneratePrompt"
+              class="regenerate-prompt"
+              placeholder="Enter your prompt to customize the interview questions. For example: 'Focus more on leadership skills and project management' or 'Add questions about specific technologies like React and Node.js'"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <button class="generate-btn-modal show" id="regenerateBtn">
+            🔄 Regenerate Interview Questions
+          </button>
+
+          <div class="loading-modal" id="regenerateLoading">
+            <div class="spinner"></div>
+            <p>Generating new interview questions...</p>
+          </div>
+
+          <div class="success-message" id="regenerateSuccess">
+            <div style="font-size: 3em; margin-bottom: 15px">✅</div>
+            <h3>Questions Regenerated Successfully!</h3>
+            <p>The interview questions have been updated.</p>
+          </div>
+
+          <div class="error-message" id="regenerateError"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Candidate Modal -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Candidate</h2>
+          <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm" class="edit-form">
+            <div class="form-row">
+              <label for="editName">Name:</label>
+              <input type="text" id="editName" name="Name" required />
+            </div>
+            <div class="form-row">
+              <label for="editEmail">Email:</label>
+              <input type="email" id="editEmail" name="email" required />
+            </div>
+            <div class="form-row">
+              <label for="editPhone">Phone:</label>
+              <input type="tel" id="editPhone" name="number" />
+            </div>
+            <div class="form-row">
+              <label for="editProfession">Profession:</label>
+              <input type="text" id="editProfession" name="profession" />
+            </div>
+            <div class="form-row">
+              <label for="editEducation">Education:</label>
+              <div class="textarea-wrapper">
+                <textarea
+                  id="editEducation"
+                  name="education"
+                  rows="2"
+                ></textarea>
+                <button
+                  type="button"
+                  class="expand-btn"
+                  onclick="expandTextarea('editEducation')"
+                >
+                  ⛶
+                </button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="editExperience">Experience:</label>
+              <div class="textarea-wrapper">
+                <textarea
+                  id="editExperience"
+                  name="Experience"
+                  rows="2"
+                ></textarea>
+                <button
+                  type="button"
+                  class="expand-btn"
+                  onclick="expandTextarea('editExperience')"
+                >
+                  ⛶
+                </button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="editSkills">Skills (comma separated):</label>
+              <div class="textarea-wrapper">
+                <textarea id="editSkills" name="skills" rows="2"></textarea>
+                <button
+                  type="button"
+                  class="expand-btn"
+                  onclick="expandTextarea('editSkills')"
+                >
+                  ⛶
+                </button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="editProjects">Projects:</label>
+              <div class="textarea-wrapper">
+                <textarea id="editProjects" name="Project" rows="2"></textarea>
+                <button
+                  type="button"
+                  class="expand-btn"
+                  onclick="expandTextarea('editProjects')"
+                >
+                  ⛶
+                </button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="editInterviewURL">Interview URL:</label>
+              <input type="url" id="editInterviewURL" name="Interview_url" />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeEditModal()"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="save-btn">Save</button>
+            </div>
+          </form>
+          <div class="error-message" id="editError"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fullscreen Textarea Overlay -->
+    <div id="fullscreenOverlay" class="fullscreen-textarea-overlay">
+      <button class="close-fullscreen" onclick="closeFullscreen()">
+        Close
+      </button>
+      <textarea id="fullscreenTextarea"></textarea>
+    </div>
+
+    <!-- Scraper Modal -->
+    <div class="modal" id="scraperModal">
+      <div class="modal-content" style="max-width: 1000px">
+        <div class="modal-header">
+          <h2>🔍 LinkedIn Candidate Info Scraping</h2>
+          <button class="close-btn" onclick="closeScraperModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Tabs -->
+          <div class="scraper-tabs">
+            <button
+              class="scraper-tab-btn active"
+              onclick="switchScraperTab('single')"
+              id="scraperTabSingle"
+            >
+              Single Profile
+            </button>
+            <button
+              class="scraper-tab-btn"
+              onclick="switchScraperTab('search')"
+              id="scraperTabSearch"
+            >
+              Candidate Search
+            </button>
+            <button
+              class="scraper-tab-btn"
+              onclick="switchScraperTab('all')"
+              id="scraperTabAll"
+            >
+              View All Candidates
+            </button>
+          </div>
+
+          <!-- Single Profile Tab -->
+          <div id="scraperTabContentSingle" class="scraper-tab-content">
+            <p>Enter a LinkedIn profile URL to scrape and extract comprehensive profile data.</p>
+            <input
+              type="text"
+              id="linkedinUrlInput"
+              placeholder="https://linkedin.com/in/username"
+              style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;"
+            />
+            <button
+              class="generate-btn-modal show"
+              onclick="scrapeSingleProfile()"
+              id="scrapeSingleBtn"
+            >
+              🔍 Scrape Profile
+            </button>
+            <div class="loading-modal" id="scrapeLoading">
+              <div class="spinner"></div>
+              <p>Scraping LinkedIn profile and extracting data...</p>
+            </div>
+            <div id="scrapeResult" class="scraper-result"></div>
+          </div>
+
+          <!-- Candidate Search Tab -->
+          <div
+            id="scraperTabContentSearch"
+            class="scraper-tab-content"
+            style="display: none"
+          >
+            <p>Search for candidates on LinkedIn by role, skills, location, and experience.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+              <input
+                type="text"
+                id="searchRole"
+                placeholder="Role (e.g. Python Developer)"
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+              />
+              <input
+                type="text"
+                id="searchSkills"
+                placeholder="Skills (e.g. Django, Flask)"
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+              />
+              <input
+                type="text"
+                id="searchLocation"
+                placeholder="Location (e.g. San Francisco)"
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+              />
+              <input
+                type="text"
+                id="searchExperience"
+                placeholder="Experience (e.g. 5 years)"
+                style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+              />
+            </div>
+            <button
+              class="generate-btn-modal show"
+              onclick="searchLinkedInCandidates()"
+              id="searchCandidatesBtn"
+            >
+              🔎 Search Candidates
+            </button>
+            <div class="loading-modal" id="searchLoading">
+              <div class="spinner"></div>
+              <p>Searching LinkedIn for candidates...</p>
+            </div>
+            <div id="searchResult" class="scraper-result"></div>
+          </div>
+
+          <!-- View All Candidates Tab -->
+          <div
+            id="scraperTabContentAll"
+            class="scraper-tab-content"
+            style="display: none"
+          >
+            <p>View all candidates scraped and stored in the local database.</p>
+            <button
+              class="generate-btn-modal show"
+              onclick="loadScrapedCandidates()"
+              style="margin-bottom: 20px;"
+            >
+              🔄 Refresh Candidates
+            </button>
+            <div class="loading-modal" id="allCandidatesLoading">
+              <div class="spinner"></div>
+              <p>Loading scraped candidates...</p>
+            </div>
+            <div id="allCandidatesResult" class="scraper-result"></div>
+          </div>
+
+          <div class="error-message" id="scraperError"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts.js?v=3"></script>
+  </body>
+</html>

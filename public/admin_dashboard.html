@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Interview Analytics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="admin-style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <div class="bg-overlay"></div>
+
+    <header class="header">
+      <div class="nav-container">
+        <div class="logo">
+          <div class="logo-icon">📊</div>
+          Admin Dashboard
+        </div>
+        <div class="nav-actions">
+          <a href="index.html" class="btn btn-secondary">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"
+              />
+            </svg>
+            Back to Dashboard
+          </a>
+          <a href="interview.html" class="btn btn-primary">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            New Interview
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-container">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">🎯 Interview Analytics</h1>
+        <p class="dashboard-subtitle">
+          Comprehensive overview of candidate assessments and performance
+          metrics
+        </p>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg
+                class="card-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              Total Candidates
+            </div>
+          </div>
+          <div class="card-value" id="totalCandidates">0</div>
+          <div class="card-change positive" id="candidatesChange">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+            +12% from last month
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg
+                class="card-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Recommended
+            </div>
+          </div>
+          <div class="card-value" id="recommendedCandidates">0</div>
+          <div class="card-change positive" id="recommendedChange">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+            +8% from last month
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg
+                class="card-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+              </svg>
+              Avg Score
+            </div>
+          </div>
+          <div class="card-value" id="averageScore">0</div>
+          <div class="card-change positive" id="scoreChange">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
+            </svg>
+            +0.3 from last month
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg
+                class="card-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Avg Duration
+            </div>
+          </div>
+          <div class="card-value" id="averageDuration">0m</div>
+          <div class="card-change negative" id="durationChange">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+              />
+            </svg>
+            -2m from last month
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-section">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">
+              <svg
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              Interview Trends
+            </h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="trendsChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">
+              <svg
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                />
+              </svg>
+              Score Distribution
+            </h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="scoresChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="filters-section">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label class="filter-label">Status</label>
+            <select class="filter-select" id="statusFilter">
+              <option value="">All Statuses</option>
+              <option value="recommended">Recommended</option>
+              <option value="not-recommended">Not Recommended</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Position</label>
+            <select class="filter-select" id="positionFilter">
+              <option value="">All Positions</option>
+              <option value="frontend">Frontend Developer</option>
+              <option value="backend">Backend Developer</option>
+              <option value="fullstack">Full Stack Developer</option>
+              <option value="mobile">Mobile Developer</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Date Range</label>
+            <select class="filter-select" id="dateFilter">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="dashboard.applyFilters()">
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <div class="table-header">
+          <h3 class="table-title">
+            <svg
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+              />
+            </svg>
+            Candidate Records
+          </h3>
+          <div class="search-box">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search candidates..."
+              id="searchInput"
+            />
+          </div>
+        </div>
+
+        <table class="data-table" id="candidatesTable">
+          <thead>
+            <tr>
+              <th>👤 Name</th>
+              <th>⭐ Score</th>
+              <th>📋 Status</th>
+              <th>📅 Date</th>
+              <th>🔧 Actions</th>
+            </tr>
+          </thead>
+          <tbody id="candidatesTableBody">
+            <tr>
+              <td colspan="5" class="loading">
+                <div class="spinner"></div>
+                <p>Loading candidate data...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script src="admin-script.js"></script>
+  </body>
+</html>
