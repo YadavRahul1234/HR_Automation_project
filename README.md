@@ -60,6 +60,15 @@ LINKEDIN_PASSWORD=your_password
 
 # OpenAI
 OPENAI_API_KEY=your_key
+AIRTABLE_API_KEY_ADMIN=your_kye
+AIRTABLE_BASE_ID_ADMIN=your base
+AIRTABLE_TABLE_ID_ADMIN=your table
+AIRTABLE_VIEW_ID_ADMIN=your view
+
+RETELL_AGENT_ID=your agent id
+N8N_RESUME_WEBHOOK_URL=your webhook url
+N8N_REGENERATE_WEBHOOK_URL=your webhook url
+
 ```
 
 ### 3. Run Application

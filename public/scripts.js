@@ -1003,35 +1003,41 @@ function createCandidateCard(candidate, showPdfButton) {
         : (typeof experience === 'string' ? experience.substring(0, 200) + (experience.length > 200 ? '...' : '') : experience);
 
     return `
-        <div style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
-                <div>
-                    <h4 style="margin: 0 0 5px 0; color: #333; font-size: 18px;">${name}</h4>
-                    ${linkedinUrl ? `<a href="${linkedinUrl}" target="_blank" style="color: #0077b5; text-decoration: none; font-size: 14px;">🔗 LinkedIn Profile</a>` : ''}
+        <div class="user-card scraper-card">
+            <div class="user-header">
+                <div class="user-info">
+                    <h3>${name}</h3>
+                    ${linkedinUrl ? `<a href="${linkedinUrl}" target="_blank" class="linkedin-link">🔗 LinkedIn Profile</a>` : ''}
                 </div>
-                ${id ? `<button onclick="deleteScrapedCandidate('${id}')" style="background: #ff4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">🗑️ Delete</button>` : ''}
+                ${id ? `<button onclick="deleteScrapedCandidate('${id}')" class="delete-btn-small">🗑️</button>` : ''}
             </div>
-            <div style="margin-bottom: 10px;">
-                <strong>📧 Email:</strong> ${email}
+            
+            <div class="info-row">
+                <span class="info-icon">📧</span>
+                <span>${email}</span>
             </div>
-            <div style="margin-bottom: 10px;">
-                <strong>📱 Phone:</strong> ${phone}
+            <div class="info-row">
+                <span class="info-icon">📱</span>
+                <span>${phone}</span>
             </div>
-            <div style="margin-bottom: 10px;">
-                <strong>🎓 Education:</strong><br>
-                <div style="margin-left: 20px; color: #555;">${educationDisplay}</div>
+            
+            <div class="detail-section small">
+                <h4>🎓 Education</h4>
+                <div class="detail-content-small">${educationDisplay}</div>
             </div>
-            <div style="margin-bottom: 10px;">
-                <strong>💼 Experience:</strong><br>
-                <div style="margin-left: 20px; color: #555;">${experienceDisplay}</div>
+            
+            <div class="detail-section small">
+                <h4>💼 Experience</h4>
+                <div class="detail-content-small">${experienceDisplay}</div>
             </div>
-            <div style="margin-bottom: 15px;">
-                <strong>🛠️ Skills:</strong><br>
-                <div style="margin-top: 8px;">${skillsDisplay}</div>
+            
+            <div class="detail-section small">
+                <h4>🛠️ Skills</h4>
+                <div class="skills-container">${skillsDisplay}</div>
             </div>
+
             ${showPdfButton ? `
-                <button class="pdf-download-btn" data-candidate='${JSON.stringify(candidate).replace(/'/g, "&#39;")}' 
-                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%;">
+                <button class="pdf-download-btn" data-candidate='${JSON.stringify(candidate).replace(/'/g, "&#39;")}' >
                     📥 Download PDF Resume
                 </button>
             ` : ''}

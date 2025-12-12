@@ -144,12 +144,21 @@
 
           <div class="regenerate-section">
             <h3>✏️ Enter Prompt for New Questions</h3>
-            <textarea
-              id="regeneratePrompt"
-              class="regenerate-prompt"
-              placeholder="Enter your prompt to customize the interview questions. For example: 'Focus more on leadership skills and project management' or 'Add questions about specific technologies like React and Node.js'"
-              rows="4"
-            ></textarea>
+            <div class="textarea-wrapper">
+              <textarea
+                id="regeneratePrompt"
+                class="regenerate-prompt"
+                placeholder="Enter your prompt to customize the interview questions. For example: 'Focus more on leadership skills and project management' or 'Add questions about specific technologies like React and Node.js'"
+                rows="4"
+              ></textarea>
+              <button
+                type="button"
+                class="expand-btn"
+                onclick="expandTextarea('regeneratePrompt')"
+              >
+                ⛶
+              </button>
+            </div>
           </div>
 
           <button class="generate-btn-modal show" id="regenerateBtn">
