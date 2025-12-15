@@ -8,50 +8,62 @@
   </head>
   <body>
     <div class="header">
-      <h1>🎯 Admin Dashboard</h1>
-      <p>Manage and view all candidate interview data</p>
+      <h1>
+        <span style="font-size: 1.5em;">🎯</span> 
+        Admin Dashboard
+      </h1>
+      <div class="nav-actions">
+          <button class="btn btn-secondary btn-sm" onclick="exportData()">
+            📥 Export
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="loadUserData()">
+            🔄 Refresh
+          </button>
+      </div>
     </div>
 
     <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-number" id="totalUsers">0</div>
-        <div class="stat-label">Total Candidates</div>
+      <div class="stat-card stat-candidates">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-number" id="totalUsers">0</div>
+          <div class="stat-label">Total Candidates</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalQuestions">0</div>
-        <div class="stat-label">Total Questions Generated</div>
+      <div class="stat-card stat-questions">
+        <div class="stat-icon">❓</div>
+        <div class="stat-info">
+          <div class="stat-number" id="totalQuestions">0</div>
+          <div class="stat-label">Total Questions Generated</div>
+        </div>
       </div>
     </div>
 
     <div class="controls">
       <div class="search-box">
+        <span class="search-icon">🔍</span>
         <input
           type="text"
           id="searchInput"
-          placeholder="Search by name, email, or skills..."
+          placeholder="Search candidates..."
         />
-        <span class="search-icon">🔍</span>
       </div>
-      <button class="refresh-btn" onclick="loadUserData()">🔄 Refresh</button>
-      <button class="export-btn" onclick="exportData()">📥 Export CSV</button>
-      <button class="upload-btn" onclick="openUploadModal()">
-        📤 Upload Resume
-      </button>
-      <button class="delete-selected-btn" onclick="deleteSelected()">
-        🗑️ Delete Selected
-      </button>
-      <button class="delete-all-btn" onclick="deleteAll()">
-        ⚠️ Delete All
-      </button>
-      <button
-        class="dashboard-btn"
-        onclick="window.location.href='admin_dashboard.html'"
-      >
-        📊 Admin Dashboards
-      </button>
-      <button class="scraper-btn" onclick="window.location.href='scraper.html'">
-        🔍 Candidate Info Scraping
-      </button>
+      
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="openUploadModal()">
+            📤 Upload Resume
+          </button>
+
+          <button class="btn btn-secondary" onclick="window.location.href='scraper.html'">
+            🔍 Scraper
+          </button>
+          <button class="btn btn-secondary" onclick="window.location.href='admin_dashboard.html'">
+            📊 Analytics
+          </button>
+          <button class="btn btn-danger" onclick="deleteSelected()">
+            🗑️ Delete
+          </button>
+      </div>
     </div>
 
     <div class="container">
@@ -185,7 +197,7 @@
     <div class="modal" id="editModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Edit Candidate</h2>
+          <h2>✏️ Edit Candidate</h2>
           <button class="close-btn" onclick="closeEditModal()">&times;</button>
         </div>
         <div class="modal-body">

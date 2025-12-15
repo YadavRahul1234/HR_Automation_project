@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LinkedIn Candidate Scraper</title>
     <link rel="stylesheet" href="style.css?v=2" />
+    <link rel="stylesheet" href="scraper.css?v=2" />
   </head>
   <body>
     <!-- Header -->
@@ -18,7 +19,7 @@
 
     <!-- Controls -->
     <div class="controls">
-      <a href="/" class="dashboard-btn">← Back to Dashboard</a>
+      <a href="/" class="btn btn-secondary" id="backDashboardBtn">← Back to Dashboard</a>
     </div>
 
     <!-- Container -->
@@ -61,7 +62,7 @@
               placeholder="https://linkedin.com/in/username"
             />
             <button
-              class="scraper-btn-primary"
+              class="btn btn-primary"
               onclick="scrapeSingleProfile()"
               id="scrapeSingleBtn"
             >
@@ -111,7 +112,7 @@
               />
             </div>
             <button
-              class="scraper-btn-primary"
+              class="btn btn-primary"
               onclick="searchLinkedInCandidates()"
               id="searchCandidatesBtn"
             >
@@ -136,7 +137,7 @@
           >
             <p>View all candidates scraped and stored in the local database.</p>
             <button
-              class="scraper-btn-primary"
+              class="btn btn-primary"
               onclick="loadScrapedCandidates()"
             >
               🔄 Refresh Candidates

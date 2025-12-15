@@ -4,12 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Interview Analytics</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="admin-style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      /* Selective Security Controls - Only Ctrl+U and Right-Click */
+      body {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+
+      .protected-content {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+    </style>
   </head>
 
   <body>
@@ -22,29 +47,7 @@
           Admin Dashboard
         </div>
         <div class="nav-actions">
-          <a href="index.html" class="btn btn-secondary">
-            <svg
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"
-              />
-            </svg>
-            Back to Dashboard
-          </a>
+          <a href="index.html" class="btn btn-secondary"> Back-Dashboard </a>
           <a href="interview.html" class="btn btn-primary">
             <svg
               width="16"
@@ -390,5 +393,112 @@
     </main>
 
     <script src="admin-script.js"></script>
+
+    <!-- Selective Security Controls - Production Level -->
+    <script>
+      (function () {
+        "use strict";
+
+        // Configuration - Only Ctrl+U and Right-Click blocking
+        const SECURITY_CONFIG = {
+          blockCtrlU: true,
+          blockRightClick: true,
+          blockF12: false,
+          blockDevTools: false,
+          blockConsole: false,
+          logSecurityEvents: false,
+        };
+
+        // Security state
+        let securityViolations = 0;
+        const MAX_VIOLATIONS = 999999; // Effectively disabled for normal use
+
+        // Utility function for logging (silent)
+        function logSecurityEvent(event, details = {}) {
+          if (!SECURITY_CONFIG.logSecurityEvents) return;
+
+          const logData = {
+            timestamp: new Date().toISOString(),
+            event: event,
+            details: details,
+            violations: securityViolations,
+            userAgent: navigator.userAgent,
+          };
+
+          try {
+            const securityLogs = JSON.parse(
+              localStorage.getItem("security_logs") || "[]"
+            );
+            securityLogs.push(logData);
+            if (securityLogs.length > 50) {
+              securityLogs.splice(0, securityLogs.length - 50);
+            }
+            localStorage.setItem("security_logs", JSON.stringify(securityLogs));
+          } catch (error) {
+            // Silent fail if localStorage unavailable
+          }
+        }
+
+        // Block Ctrl+U (View Source)
+        function blockCtrlU() {
+          if (!SECURITY_CONFIG.blockCtrlU) return;
+
+          document.addEventListener("keydown", function (e) {
+            if (e.ctrlKey && e.key === "u") {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+
+              securityViolations++;
+              logSecurityEvent("CTRL_U_BLOCKED", {
+                key: e.key,
+                ctrlKey: e.ctrlKey,
+              });
+
+              return false;
+            }
+          });
+        }
+
+        // Block Right-Click Context Menu
+        function blockRightClick() {
+          if (!SECURITY_CONFIG.blockRightClick) return;
+
+          document.addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+            securityViolations++;
+            logSecurityEvent("RIGHT_CLICK_BLOCKED", {
+              target: e.target.tagName,
+              x: e.clientX,
+              y: e.clientY,
+            });
+            return false;
+          });
+        }
+
+        // Initialize selective security
+        function initializeSelectiveSecurity() {
+          console.log("🔒 Selective Security Controls Initialized");
+
+          blockCtrlU();
+          blockRightClick();
+
+          logSecurityEvent("SELECTIVE_SECURITY_INITIALIZED", {
+            config: SECURITY_CONFIG,
+            userAgent: navigator.userAgent,
+          });
+        }
+
+        // Auto-initialize
+        if (document.readyState === "loading") {
+          document.addEventListener(
+            "DOMContentLoaded",
+            initializeSelectiveSecurity
+          );
+        } else {
+          initializeSelectiveSecurity();
+        }
+      })();
+    </script>
   </body>
 </html>

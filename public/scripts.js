@@ -121,10 +121,10 @@ function createUserCard(user) {
                 <span class="info-icon">📱</span>
                 <span>${phone}</span>
             </div>
-            <button class="view-details-btn" data-action="view-details">View Full Details</button>
+            <button class="btn btn-primary w-full" data-action="view-details" style="margin-top: 1rem;">View Full Details</button>
             <div class="action-buttons">
-                <button class="edit-btn" data-action="edit">Edit</button>
-                <button class="delete-btn" data-action="delete">Delete</button>
+                <button class="btn btn-secondary" data-action="edit">Edit</button>
+                <button class="btn btn-danger" data-action="delete">Delete</button>
             </div>
         </div>
     `;
@@ -200,7 +200,7 @@ function viewDetails(user) {
     // Add Regenerate Questions button at the bottom
     html += `
         <div class="detail-section" style="text-align: center; margin-top: 2rem;">
-            <button id="regenerateFromModal" class="regenerate-btn" style="padding: 12px 32px; font-size: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+            <button id="regenerateFromModal" class="btn btn-primary">
                 🔄 Regenerate Interview Questions
             </button>
         </div>
@@ -218,15 +218,7 @@ function viewDetails(user) {
         });
         
         // Add hover effect
-        regenerateBtn.addEventListener("mouseenter", function() {
-            this.style.transform = "translateY(-2px)";
-            this.style.boxShadow = "0 6px 20px rgba(102, 126, 234, 0.6)";
-        });
-        
-        regenerateBtn.addEventListener("mouseleave", function() {
-            this.style.transform = "translateY(0)";
-            this.style.boxShadow = "0 4px 15px rgba(102, 126, 234, 0.4)";
-        });
+        // Removed manual hover effect as CSS handles it now
     }
 }
 
@@ -597,7 +589,7 @@ generateBtnModal.addEventListener("click", async () => {
             data = { success: true };
         }
 
-        console.log("Resume processed successfully:", data);
+
 
         loadingModalElement.classList.remove("show");
         successMessageElement.classList.add("show");
@@ -756,7 +748,7 @@ document.getElementById("regenerateBtn").addEventListener("click", async () => {
             data = { success: true };
         }
 
-        console.log("Questions regenerated successfully:", data);
+
 
         loadingElement.classList.remove("show");
         successElement.classList.add("show");
@@ -1124,3 +1116,139 @@ window.addEventListener('click', (e) => {
     }
 });
 
+
+
+// Production-Level Code Protection
+(function() {
+    // Disable console methods
+    const noop = function() {};
+    const methods = ['debug', 'info', 'warn', 'error', 'clear', 'log'];
+    
+    methods.forEach(method => {
+        console[method] = noop;
+    });
+    
+    // Disable DevTools detection and protection
+    document.addEventListener('keydown', function(event) {
+        // Disable F12
+        if(event.keyCode == 123) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+U (View Source)
+        if(event.ctrlKey && event.keyCode == 85) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+Shift+I (Developer Tools)
+        if(event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+Shift+C (Element Inspector)
+        if(event.ctrlKey && event.shiftKey && event.keyCode == 67) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+S (Save Page)
+        if(event.ctrlKey && event.keyCode == 83) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+A (Select All)
+        if(event.ctrlKey && event.keyCode == 65) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+P (Print)
+        if(event.ctrlKey && event.keyCode == 80) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable Ctrl+Shift+J (Console)
+        if(event.ctrlKey && event.shiftKey && event.keyCode == 74) {
+            event.preventDefault();
+            return false;
+        }
+    });
+    
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    
+    // Disable selection and drag
+    document.addEventListener('selectstart', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    
+    document.addEventListener('dragstart', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    
+    // Detect Developer Tools
+    let devtools = {
+        isOpen: false,
+        orientation: null
+    };
+
+    const threshold = 160;
+    setInterval(() => {
+        if(window.outerHeight - window.innerHeight > threshold || 
+           window.outerWidth - window.innerWidth > threshold) {
+            if(!devtools.isOpen) {
+                devtools.isOpen = true;
+                console.clear();
+                console.log('%cStop!', 'color: red; font-size: 40px; font-weight: bold;');
+                console.log('%cThis is a browser feature intended for developers. If someone told you to copy-paste something here, it is likely an attempt to compromise your security.', 'color: red; font-size: 14px;');
+            }
+        } else {
+            devtools.isOpen = false;
+        }
+    }, 500);
+
+    // Anti-Debugging
+    let ok = false;
+    setInterval(() => {
+        if(!ok) {
+            ok = true;
+            console.clear();
+            console.log('%cAccess Denied!', 'color: red; font-size: 50px; font-weight: bold;');
+            console.log('%cDeveloper tools are not allowed in this application.', 'color: red; font-size: 16px;');
+        } else {
+            ok = false;
+        }
+    }, 1000);
+
+    // Hide page when DevTools detected
+    function hidePage() {
+        document.body.style.display = 'none';
+        setTimeout(() => {
+            document.body.style.display = 'block';
+        }, 100);
+    }
+
+    setInterval(() => {
+        if(devtools.isOpen) {
+            hidePage();
+        }
+    }, 1000);
+
+    // Override console methods
+    console.warn = console.error = console.info = console.debug = function() {
+        // Silently block console output
+    };
+
+    // Clear console on load
+    console.clear();
+})();
