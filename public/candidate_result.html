@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
       * {
         margin: 0;
@@ -412,6 +413,9 @@
         color: #0c4a6e;
         line-height: 1.6;
         font-size: 0.95rem;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Strengths & Concerns */
@@ -453,6 +457,9 @@
         gap: 0.75rem;
         font-size: 0.95rem;
         line-height: 1.5;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       .strengths .assessment-list li {
@@ -647,6 +654,9 @@
         font-style: italic;
         position: relative;
         z-index: 1;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       .quote-empty {
@@ -691,6 +701,9 @@
         line-height: 1.6;
         margin: 0;
         font-size: 0.95rem;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Animations */
@@ -750,6 +763,115 @@
 
         100% {
           transform: rotate(360deg);
+        }
+      }
+
+      /* PDF-specific styles */
+      @media print {
+        body {
+          background: white;
+          margin: 0;
+          padding: 0;
+        }
+
+        .header,
+        .actions-card {
+          display: none !important;
+        }
+
+        .main-container {
+          display: block !important;
+          max-width: 100% !important;
+          width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        .content-area,
+        .sidebar {
+          width: 100% !important;
+          max-width: 100% !important;
+          display: block !important;
+        }
+
+        .card {
+          page-break-inside: avoid;
+          break-inside: avoid;
+          margin-bottom: 15px;
+          overflow: visible !important;
+        }
+
+        .assessment-grid {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+
+        .skill-item,
+        .quote-block {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+
+        .assessment-list li {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+
+        /* Force text wrapping to multiple lines */
+        * {
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+          word-break: break-word !important;
+          white-space: normal !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+        }
+
+        /* Ensure content wraps properly */
+        .executive-summary p,
+        .quote-text,
+        .assessment-list li,
+        .follow-up-content p,
+        .detail-value,
+        .candidate-name,
+        h1, h2, h3, h4, h5, h6,
+        p, span, div {
+          max-width: 100% !important;
+          white-space: normal !important;
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+          word-break: break-word !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+        }
+
+        /* Specific fixes for score displays and long text */
+        .score-value,
+        .skill-score,
+        .detail-value,
+        .experience-score-value {
+          display: block !important;
+          max-width: 100% !important;
+          overflow: visible !important;
+          white-space: normal !important;
+          word-wrap: break-word !important;
+        }
+
+        /* Ensure flex containers don't cause overflow */
+        .detail-row,
+        .skill-header,
+        .summary-header {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          overflow: visible !important;
+        }
+
+        /* Make sure text in flex items wraps */
+        .detail-row > *,
+        .skill-header > * {
+          max-width: 100% !important;
+          flex-shrink: 1 !important;
+          min-width: 0 !important;
         }
       }
 
@@ -1715,7 +1837,262 @@
       }
 
       function downloadReport() {
-        alert("Download report functionality would be implemented here");
+        console.log("Download initiated - Overlay Strategy");
+        
+        try {
+            // Helper to safe get text
+            const getText = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.textContent.trim() : '';
+            };
+
+            // Get candidate data with fallbacks
+            const candidateName = getText("candidateName") || "Candidate Report";
+            const candidateEmail = getText("candidateEmail");
+            const position = getText("position");
+            const overallScore = getText("overallScore");
+            const interviewDate = getText("interviewDate");
+            const duration = getText("duration");
+            const executiveSummary = getText("executiveSummary");
+            
+            // Get scores with fallbacks
+            const technicalScore = getText("technicalScore") || "0.0";
+            const communicationScore = getText("communicationScore") || "0.0";
+            const problemSolvingScore = getText("problemSolvingScore") || "0.0";
+            const culturalFitScore = getText("culturalFitScore") || "0.0";
+            const experienceScore = getText("experienceRelevanceScore") || "0.0";
+            
+            // Get recommendation
+            const recommendation = getText("recommendationBadge") || "Review Required";
+            
+            // Get strengths and concerns
+            const strengthsList = Array.from(document.querySelectorAll('#strengthsList li')).map(li => li.textContent);
+            const concernsList = Array.from(document.querySelectorAll('#concernsList li')).map(li => li.textContent);
+            
+            // Get quotes
+            const quotes = Array.from(document.querySelectorAll('.quote-text')).map(q => q.textContent);
+            
+            // Get follow-up if exists
+            const followUpSection = document.getElementById("followUpSection");
+            const followUpText = followUpSection && followUpSection.style.display !== 'none' 
+              ? document.getElementById("followUpContent").textContent.trim() 
+              : null;
+
+            // 1. Create Loading Overlay (Highest Z-Index) to hide the rendering process
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'pdf-loading-overlay';
+            loadingOverlay.style.position = 'fixed';
+            loadingOverlay.style.top = '0';
+            loadingOverlay.style.left = '0';
+            loadingOverlay.style.width = '100vw';
+            loadingOverlay.style.height = '100vh';
+            loadingOverlay.style.background = 'rgba(255, 255, 255, 0.98)';
+            loadingOverlay.style.zIndex = '100000'; // Topmost
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.justifyContent = 'center';
+            loadingOverlay.style.alignItems = 'center';
+            loadingOverlay.style.flexDirection = 'column';
+            loadingOverlay.innerHTML = `
+                <div class="spinner" style="width: 50px; height: 50px; border-width: 4px; border-color: #e2e8f0; border-top-color: #3b82f6;"></div>
+                <h3 style="margin-top: 20px; color: #0f172a; font-family: 'Inter', sans-serif;">Generatiing PDF Report...</h3>
+                <p style="color: #64748b; font-size: 14px; font-family: 'Inter', sans-serif;">Please wait while we format your document.</p>
+            `;
+            document.body.appendChild(loadingOverlay);
+
+            // 2. Create PDF Container (High Z-Index, but below overlay)
+            const pdfContainer = document.createElement('div');
+            pdfContainer.id = 'pdf-generation-container';
+            // A4 dimensions in px (approximate for screen rendering @ 96dpi)
+            // A4 is 210mm x 297mm. 
+            // html2pdf default uses mm units.
+            pdfContainer.style.width = '794px'; 
+            pdfContainer.style.minHeight = '1123px'; 
+            pdfContainer.style.padding = '40px';
+            pdfContainer.style.backgroundColor = '#ffffff';
+            pdfContainer.style.fontFamily = 'Inter, sans-serif';
+            pdfContainer.style.color = '#334155';
+            
+            // IMPORTANT: Place it visibly on screen but covered by key overlay
+            // CHANGE: Use absolute positioning instead of fixed.
+            // Absolute positioning relative to body is safer for html2canvas to capture correct coordinates.
+            pdfContainer.style.position = 'absolute'; 
+            pdfContainer.style.top = '0';
+            pdfContainer.style.left = '300px';
+            pdfContainer.style.margin = '0'; // Strict zero margin
+            pdfContainer.style.zIndex = '99999'; // Under overlay
+            pdfContainer.style.boxShadow = 'none'; // distinct from debug mode
+            
+            // Build PDF HTML
+            pdfContainer.innerHTML = `
+              <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #2563eb;">
+                <h1 style="color: #0f172a; font-size: 28px; margin-bottom: 10px;">Interview Assessment Report</h1>
+                <p style="color: #64748b; font-size: 14px;">Generated on ${new Date().toLocaleDateString()}</p>
+              </div>
+              
+              <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                <h2 style="color: #0f172a; font-size: 24px; margin-bottom: 15px;">${candidateName}</h2>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 10px;">
+                  <div style="color: #64748b; font-size: 14px;"><strong>Email:</strong> ${candidateEmail}</div>
+                  <div style="color: #64748b; font-size: 14px;"><strong>Position:</strong> ${position}</div>
+                </div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                  <div style="color: #64748b; font-size: 14px;"><strong>Date:</strong> ${interviewDate}</div>
+                  <div style="color: #64748b; font-size: 14px;"><strong>Duration:</strong> ${duration}</div>
+                </div>
+                <div style="margin-top: 15px; padding: 10px 20px; background: ${recommendation.includes('Recommended') ? '#dcfce7' : recommendation.includes('Not') ? '#fee2e2' : '#fef3c7'}; 
+                            color: ${recommendation.includes('Recommended') ? '#166534' : recommendation.includes('Not') ? '#991b1b' : '#92400e'}; 
+                            border-radius: 20px; display: inline-block; font-weight: 600; font-size: 14px;">
+                  ${recommendation}
+                </div>
+              </div>
+              
+              <div style="text-align: center; margin: 25px 0; padding: 20px; background: #f0f9ff; border-radius: 8px;">
+                <div style="font-size: 48px; font-weight: 800; color: #0f172a; margin-bottom: 5px;">${overallScore}</div>
+                <div style="color: #64748b; font-size: 14px; font-weight: 600; text-transform: uppercase;">Overall Score</div>
+              </div>
+              
+              <div style="margin: 25px 0;">
+                <h3 style="color: #0369a1; font-size: 18px; margin-bottom: 15px; display: flex; align-items: center;">
+                  📋 Executive Summary
+                </h3>
+                <p style="color: #334155; line-height: 1.8; font-size: 14px; background: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 3px solid #0ea5e9;">
+                  ${executiveSummary}
+                </p>
+              </div>
+              
+              <div style="margin: 25px 0;">
+                <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 15px;">📊 Skills Assessment</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">Technical Skills</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #3b82f6;">${technicalScore}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">Communication</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #10b981;">${communicationScore}</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">Problem Solving</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #f59e0b;">${problemSolvingScore}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">Cultural Fit</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #8b5cf6;">${culturalFitScore}</td>
+                  </tr>
+                  <tr style="background: #f8fafc;">
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: 600; color: #334155;">Experience Relevance</td>
+                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700; color: #0ea5e9;">${experienceScore}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              ${quotes.length > 0 ? `
+              <div style="margin: 25px 0;">
+                <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 15px;">💬 Notable Quotes</h3>
+                ${quotes.map(quote => `
+                  <div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 15px; margin: 10px 0; border-radius: 4px;">
+                    <p style="color: #92400e; font-style: italic; font-size: 14px; line-height: 1.6; margin: 0;">"${quote}"</p>
+                  </div>
+                `).join('')}
+              </div>
+              ` : ''}
+              
+              ${followUpText ? `
+              <div style="margin: 25px 0; background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 15px;">
+                <h3 style="color: #ea580c; font-size: 18px; margin-bottom: 10px;">⚠️ Follow-Up Required</h3>
+                <p style="color: #c2410c; font-size: 14px; line-height: 1.6; margin: 0;">${followUpText}</p>
+              </div>
+              ` : ''}
+              
+              <div style="margin: 25px 0;">
+                <div style="display: inline-block; width: 48%; vertical-align: top; margin-right: 3%;">
+                  <h3 style="color: #166534; font-size: 18px; margin-bottom: 15px;">✅ Key Strengths</h3>
+                  <ul style="list-style: none; padding: 0; margin: 0;">
+                    ${strengthsList.map(strength => `
+                      <li style="background: #f0fdf4; border-left: 3px solid #22c55e; padding: 10px; margin: 8px 0; color: #14532d; font-size: 13px; line-height: 1.5;">
+                        ${strength}
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+                <div style="display: inline-block; width: 48%; vertical-align: top;">
+                  <h3 style="color: #991b1b; font-size: 18px; margin-bottom: 15px;">⚠️ Areas of Concern</h3>
+                  <ul style="list-style: none; padding: 0; margin: 0;">
+                    ${concernsList.map(concern => `
+                      <li style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 10px; margin: 8px 0; color: #7f1d1d; font-size: 13px; line-height: 1.5;">
+                        ${concern}
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              </div>
+              
+            `;
+            
+            // Append to body
+            document.body.appendChild(pdfContainer);
+
+            // Scroll to top to help html2canvas capture from (0,0)
+            window.scrollTo(0, 0);
+            
+            const opt = {
+              margin: 10,
+              filename: `${candidateName.replace(/\s+/g, "_")}_Interview_Report.pdf`,
+              image: { type: "jpeg", quality: 0.98 },
+              html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                letterRendering: true,
+                scrollY: 0,
+                scrollX: 0, // Force start at left edge
+                // Removed windowWidth to let it detect natural size, or set to typical desktop
+                windowWidth: 1200, 
+                height: pdfContainer.scrollHeight // Capture full height
+              },
+              jsPDF: { 
+                unit: "mm", 
+                format: "a4", 
+                orientation: "portrait"
+              }
+            };
+
+            if (typeof html2pdf === 'undefined') {
+                alert("Error: PDF library not loaded. Please refresh the page.");
+                document.body.removeChild(loadingOverlay);
+                document.body.removeChild(pdfContainer);
+                return;
+            }
+
+            // Small delay to ensure rendering is complete
+            setTimeout(() => {
+                html2pdf()
+                  .set(opt)
+                  .from(pdfContainer)
+                  .save()
+                  .then(() => {
+                    console.log("PDF Generated successfully");
+                    document.body.removeChild(loadingOverlay);
+                    document.body.removeChild(pdfContainer);
+                  })
+                  .catch((err) => {
+                    console.error("PDF generation failed:", err);
+                    document.body.removeChild(loadingOverlay);
+                    if (document.body.contains(pdfContainer)) {
+                        document.body.removeChild(pdfContainer);
+                    }
+                    alert("Failed to generate PDF: " + err.message);
+                  });
+            }, 1000); // 1 second delay for DOM paint
+
+        } catch (e) {
+            console.error("Critical error in downloadReport:", e);
+            // Clean up possible overlays
+            const overlay = document.getElementById('pdf-loading-overlay');
+            const container = document.getElementById('pdf-generation-container');
+            if (overlay) overlay.remove();
+            if (container) container.remove();
+            alert("Error initializing download: " + e.message);
+        }
       }
 
       function scheduleFollowUp() {
