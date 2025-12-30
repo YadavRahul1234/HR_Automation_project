@@ -13,208 +13,9 @@ class AdminDashboard {
     init() {
         this.setupEventListeners();
         this.loadData();
-        this.initializeSecurityIntegration();
     }
     
-    initializeSecurityIntegration() {
-        // Add security violation counter to prevent dashboard access
-        this.securityViolationCount = 0;
-        this.maxSecurityViolations = 2;
-        
-        // Override console methods for security logging
-        this.secureConsole = {
-            log: (message, data = null) => {
-                this.securityViolationCount++;
-                this.logSecurityEvent('DASHBOARD_CONSOLE_ACCESS', {
-                    message: message,
-                    data: data,
-                    violations: this.securityViolationCount
-                });
-                
-                if (this.securityViolationCount >= this.maxSecurityViolations) {
-                    this.showSecurityLockdown();
-                }
-            },
-            warn: (message, data = null) => {
-                this.securityViolationCount++;
-                this.logSecurityEvent('DASHBOARD_CONSOLE_WARN', {
-                    message: message,
-                    data: data,
-                    violations: this.securityViolationCount
-                });
-            },
-            error: (message, data = null) => {
-                this.securityViolationCount++;
-                this.logSecurityEvent('DASHBOARD_CONSOLE_ERROR', {
-                    message: message,
-                    data: data,
-                    violations: this.securityViolationCount
-                });
-            }
-        };
-        
-        // Initialize security monitoring
-        this.startSecurityMonitoring();
-    }
-    
-    startSecurityMonitoring() {
-        // Monitor for suspicious activities
-        this.securityMonitor = setInterval(() => {
-            this.checkSecurityState();
-        }, 2000);
-    }
-    
-    checkSecurityState() {
-        // Check if page visibility changed (dev tools opening)
-        if (document.visibilityState === 'hidden') {
-            this.securityViolationCount++;
-            this.logSecurityEvent('PAGE_HIDDEN_SUSPICIOUS');
-        }
-        
-        // Check for suspicious timing patterns
-        const now = Date.now();
-        if (now - this.lastSecurityCheck < 100) {
-            this.securityViolationCount++;
-            this.logSecurityEvent('RAPID_FIRE_EVENTS');
-        }
-        this.lastSecurityCheck = now;
-    }
-    
-    logSecurityEvent(event, data = {}) {
-        // Create secure log entry
-        const logEntry = {
-            timestamp: new Date().toISOString(),
-            event: event,
-            dashboard: 'AdminDashboard',
-            violations: this.securityViolationCount,
-            data: data,
-            url: window.location.href,
-            userAgent: navigator.userAgent
-        };
-        
-        // Use secure logging method
-        if (typeof window.logSecurityEvent === 'function') {
-            window.logSecurityEvent(event, logEntry);
-        }
-        
-        // Store in localStorage for security audit
-        this.storeSecurityLog(logEntry);
-    }
-    
-    storeSecurityLog(logEntry) {
-        try {
-            const logs = JSON.parse(localStorage.getItem('security_logs') || '[]');
-            logs.push(logEntry);
-            
-            // Keep only last 50 logs
-            if (logs.length > 50) {
-                logs.splice(0, logs.length - 50);
-            }
-            
-            localStorage.setItem('security_logs', JSON.stringify(logs));
-        } catch (error) {
-            // Storage not available, continue silently
-        }
-    }
-    
-    showSecurityLockdown() {
-        // Create lockdown overlay
-        const lockdownDiv = document.createElement('div');
-        lockdownDiv.id = 'security-lockdown';
-        lockdownDiv.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000000;
-            font-family: 'Courier New', monospace;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        `;
-        
-        lockdownDiv.innerHTML = `
-            <div style="max-width: 600px;">
-                <h1 style="color: #ef4444; font-size: 2.5rem; margin-bottom: 1rem;">
-                    🚫 SECURITY LOCKDOWN
-                </h1>
-                <div style="background: #dc2626; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 1.1rem;">
-                        <strong>UNAUTHORIZED ACCESS DETECTED</strong>
-                    </p>
-                </div>
-                <p style="font-size: 1.1rem; line-height: 1.6;">
-                    Dashboard access has been restricted due to suspicious activities.
-                    Multiple security violations were detected.
-                </p>
-                <div style="background: #374151; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
-                    <h3 style="color: #fbbf24; margin-bottom: 10px;">Security Violations Logged:</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li>🔍 Console inspection attempts</li>
-                        <li>🛠️ Developer tools access</li>
-                        <li>⌨️ Blocked key combinations</li>
-                        <li>📊 Code analysis attempts</li>
-                    </ul>
-                </div>
-                <p style="font-size: 0.9rem; color: #9ca3af;">
-                    <strong>Action Required:</strong> Contact system administrator for access restoration.
-                </p>
-                <button onclick="location.reload()" style="
-                    background: #059669;
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 6px;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    margin-top: 20px;
-                ">
-                    Request Reload (Will Log Another Violation)
-                </button>
-            </div>
-        `;
-        
-        document.body.appendChild(lockdownDiv);
-        
-        // Log the lockdown event
-        this.logSecurityEvent('DASHBOARD_LOCKDOWN_ACTIVATED', {
-            violations: this.securityViolationCount,
-            timestamp: new Date().toISOString()
-        });
-    }
-    
-    secureDataAccess(data, operation = 'access') {
-        // Override data access with security logging
-        this.securityViolationCount++;
-        this.logSecurityEvent(`SECURE_DATA_${operation.toUpperCase()}`, {
-            dataType: typeof data,
-            dataLength: Array.isArray(data) ? data.length : null,
-            operation: operation
-        });
-        
-        return data;
-    }
-    
-    // Secure method for viewing candidate data
-    secureViewCandidate(candidateId) {
-        this.logSecurityEvent('SECURE_CANDIDATE_VIEW', {
-            candidateId: candidateId,
-            timestamp: new Date().toISOString()
-        });
-        
-        // Proceed with normal view if under security threshold
-        if (this.securityViolationCount < this.maxSecurityViolations) {
-            window.location.href = `candidate_result.html?candidate=${candidateId}`;
-        } else {
-            this.showSecurityLockdown();
-        }
-    }
+
 
     setupEventListeners() {
         const searchInput = document.getElementById('searchInput');
@@ -542,30 +343,14 @@ class AdminDashboard {
 
 
     viewCandidate(candidateId) {
-        // Use secure candidate viewing with security logging
-        this.secureViewCandidate(candidateId);
+        window.location.href = `candidate_result.html?candidate=${candidateId}`;
     }
     
-    // Enhanced security method for data operations
-    secureOperation(operation, data = null) {
-        this.securityViolationCount++;
-        this.logSecurityEvent(`SECURE_OPERATION_${operation.toUpperCase()}`, {
-            operation: operation,
-            dataType: data ? typeof data : null,
-            timestamp: new Date().toISOString()
-        });
-        
-        if (this.securityViolationCount >= this.maxSecurityViolations) {
-            this.showSecurityLockdown();
-            return null;
-        }
-        
-        return true;
-    }
+
     
     // Override critical methods with security checks
     loadData() {
-        this.secureOperation('LOAD_DATA');
+
         
         // Original loadData logic with security monitoring
         try {
