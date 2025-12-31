@@ -18,6 +18,13 @@ async function loadUserData() {
         const data = await response.json();
         allUsers = data.records || [];
 
+        // Sort users by createdTime (descending) to show newest first
+        allUsers.sort((a, b) => {
+            const dateA = new Date(a.createdTime || 0);
+            const dateB = new Date(b.createdTime || 0);
+            return dateB - dateA;
+        });
+
         displayUsers(allUsers);
         updateStats();
     } catch (error) {
